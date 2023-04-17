@@ -45,6 +45,13 @@ public class SimpleTable {
                 if (JOptionPane.YES_OPTION == result && row != -1) {
                     model.removeRow(row);
                     scoreStream.deleteByTime(tableData[row][1]);
+                    /**
+                     * 每次删除之后刷新表格数据.由于scoreInfos是有序表因此删除后直接读入即可,无需进一步排序
+                     * TODO 时间复杂度较高,后续进一步优化
+                     */
+                    for(int i=0;i<scoreInfos.size();i++){
+                        tableData[i]=new String[]{String.valueOf(i+1),scoreInfos.get(i).getPlayTime(),scoreInfos.get(i).getUserName(),String.valueOf(scoreInfos.get(i).getScore())};
+                    }
                 }
             }
         });
@@ -55,11 +62,13 @@ public class SimpleTable {
 
             }
         });
+
     }
 
     public JPanel getMainPanel() {
         return mainPanel;
     }
+
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("SimpleTable");
