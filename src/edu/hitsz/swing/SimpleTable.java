@@ -22,8 +22,6 @@ public class SimpleTable {
         String[] columnName = {"排名", "时间", "用户名", "得分"};
 
         String[][]tableData=new String[scoreInfos.size()][];
-        System.out.println(scoreInfos.size());
-
         for(int i=0;i<scoreInfos.size();i++){
             tableData[i]=new String[]{String.valueOf(i+1),scoreInfos.get(i).getPlayTime(),scoreInfos.get(i).getUserName(),String.valueOf(scoreInfos.get(i).getScore())};
         }

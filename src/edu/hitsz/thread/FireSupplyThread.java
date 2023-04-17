@@ -6,7 +6,7 @@ import edu.hitsz.shootStrategy.MultiShoot;
 import edu.hitsz.shootStrategy.SingleShoot;
 
 public class FireSupplyThread extends Thread {
-    public HeroAircraft craft;
+    private HeroAircraft craft;
 
     public FireSupplyThread(HeroAircraft heroAircraft) {
         craft = heroAircraft;

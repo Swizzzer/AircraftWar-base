@@ -306,7 +306,7 @@ public class Game extends JPanel implements InputCallback {
         // 敌机射击
         for (AbstractAircraft enemies : enemyAircrafts) {
             enemyBullets.addAll(enemies.shoot());
-            if (isMusic) {
+            if (isMusic&&(enemies instanceof EliteEnemy||enemies instanceof BossEnemy)) {
                 AudioPlayerThread enemyBulletAudioThread = new AudioPlayerThread("src/videos/bullet.wav");
                 bulletAudioThread.add(enemyBulletAudioThread);
                 enemyBulletAudioThread.start();
@@ -416,6 +416,7 @@ public class Game extends JPanel implements InputCallback {
                     if (enemyAircraft instanceof BossEnemy) {
                         --bossFlag;
                     }
+
                     heroAircraft.decreaseHp(Integer.MAX_VALUE);
                 }
             }
@@ -424,10 +425,7 @@ public class Game extends JPanel implements InputCallback {
         // 我方获得道具，道具生效
         for (BaseProp prop : Props) {
             if (heroAircraft.crash(prop) || prop.crash(heroAircraft) && !prop.notValid()) {
-                if (isMusic) {
-                    new AudioPlayerThread("src/videos/get_supply.wav").start();
-                }
-                prop.takingEffect(heroAircraft);
+                prop.takingEffect(heroAircraft,isMusic);
                 prop.vanish();// 销毁已生效的道具
             }
         }

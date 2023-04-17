@@ -16,5 +16,5 @@ public abstract class BaseProp extends AbstractFlyingObject {
             vanish();
         }
     }
-    public abstract void takingEffect(HeroAircraft Craft);
+    public abstract void takingEffect(HeroAircraft Craft,boolean isMusic);
 }

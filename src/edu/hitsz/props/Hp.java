@@ -1,6 +1,7 @@
 package edu.hitsz.props;
 
 import edu.hitsz.aircraft.*;
+import edu.hitsz.thread.AudioPlayerThread;
 
 public class Hp extends BaseProp{
     /**
@@ -12,7 +13,10 @@ public class Hp extends BaseProp{
         super(locationX, locationY, speedX, speedY);
 
     }
-    public void takingEffect(HeroAircraft Craft){
+    public void takingEffect(HeroAircraft Craft,boolean isMusic){
+        if (isMusic) {
+            new AudioPlayerThread("src/videos/get_supply.wav").start();
+        }
         Craft.decreaseHp(hpNum);
         if (Craft.getHp() > Craft.getMaxHp()) {
             Craft.decreaseHp(Craft.getHp() - Craft.getMaxHp()); // 溢出判断
