@@ -1,3 +1,4 @@
 # AircraftWar-Base
 
-实现基本的飞机大战
+The experimental assignment of Object-Oriented Software Construction Introduction. Basic functions of aircraft battle have been implemented.
+
