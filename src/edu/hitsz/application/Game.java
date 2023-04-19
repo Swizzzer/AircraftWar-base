@@ -63,7 +63,7 @@ public class Game extends JPanel implements InputCallback {
      * 记录分数除counter的商,用以判断是否生成boss敌机
      */
     private int quotient = 0;
-    private final int counter = 1000;
+    private final int counter = 500;
 
     /**
      * 当前时刻
@@ -416,6 +416,10 @@ public class Game extends JPanel implements InputCallback {
                     enemyAircraft.vanish();
                     if (enemyAircraft instanceof BossEnemy) {
                         --bossFlag;
+                        // 避免游戏结束时的处理中因为逻辑短路而未能成功执行的音效停止操作
+                        if(isMusic){
+                            bossAudioThread.stop();
+                        }
                     }
 
                     heroAircraft.decreaseHp(Integer.MAX_VALUE);
