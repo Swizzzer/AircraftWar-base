@@ -244,9 +244,6 @@ public class Game extends JPanel implements InputCallback {
                     if (bossFlag == 1 && bossAudioThread.isAlive()) {
                         bossAudioThread.stop();
                     }
-                    if (heroBulletAudioThread.isAlive()) {
-                        heroBulletAudioThread.stop();
-                    }
                     if (!bulletAudioThread.isEmpty()) {
                         for (Thread thread : bulletAudioThread) {
                             if (thread.isAlive()) {
@@ -319,6 +316,7 @@ public class Game extends JPanel implements InputCallback {
         heroBullets.addAll(heroAircraft.shoot());
         if (isMusic) {
             heroBulletAudioThread = new AudioPlayerThread("src/videos/bullet.wav");
+            bulletAudioThread.add(heroBulletAudioThread);
             heroBulletAudioThread.start();
         }
     }
