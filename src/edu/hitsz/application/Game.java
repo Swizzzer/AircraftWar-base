@@ -78,7 +78,7 @@ public class Game extends JPanel implements InputCallback {
     private int heroShootCycleTime = 0;
     private int cycleTime = 0;
     /**
-     * 用于询问并存储用户名以更新排行榜
+     * 用于询问并存储用户名以更新排行榜的字符串
      */
 
     private String userInput;
@@ -87,20 +87,25 @@ public class Game extends JPanel implements InputCallback {
      * 游戏结束标志
      */
     private boolean gameOverFlag = false;
-    private boolean isMusic;
-
     /**
      * 用于播放音乐音效的线程及判断是否播放的bool型变量
      */
+    private boolean isMusic;
+
+    /**
+     * 音效线程
+     */
     private AudioPlayerThread bgmAudioThread;
     private AudioPlayerThread bossAudioThread;
-    private AudioPlayerThread heroBulletAudioThread;
     private AudioPlayerThread overAudioThread;
-    private final List<Thread> bulletAudioThread;
+    /**
+     * 存储子弹线程的列表,用于游戏结束时一次性全部stop
+     */
+    private List<AudioPlayerThread> bulletAudioThread;
 
 
     public Game(boolean isMusic) {
-        this.isMusic=isMusic;
+        this.isMusic = isMusic;
         heroAircraft = HeroAircraft.getInstance();
 
         enemyAircrafts = new LinkedList<>();
@@ -148,7 +153,7 @@ public class Game extends JPanel implements InputCallback {
         dao.addScoreInfo(info);
         dao.printByScores();
         System.out.println("Game Over!");
-        CardLayoutDemo.cardPanel.add(new SimpleTable(dao,dao.getScoreInfos()).getMainPanel());
+        CardLayoutDemo.cardPanel.add(new SimpleTable(dao, dao.getScoreInfos()).getMainPanel());
         CardLayoutDemo.cardLayout.next(CardLayoutDemo.cardPanel);
 
     }
@@ -236,7 +241,7 @@ public class Game extends JPanel implements InputCallback {
                 gameOverFlag = true;
                 heroAircraft.destroyHeroCraft();
                 if (isMusic) {
-                    overAudioThread=new AudioPlayerThread("src/videos/game_over.wav");
+                    overAudioThread = new AudioPlayerThread("src/videos/game_over.wav");
                     overAudioThread.start();
                     if (bgmAudioThread.isAlive()) {
                         bgmAudioThread.stop();
@@ -245,13 +250,11 @@ public class Game extends JPanel implements InputCallback {
                         bossAudioThread.stop();
                     }
                     if (!bulletAudioThread.isEmpty()) {
-                        for (Thread thread : bulletAudioThread) {
+                        for (AudioPlayerThread thread : bulletAudioThread) {
                             if (thread.isAlive()) {
                                 thread.stop();
                             }
-
                         }
-
                     }
                 }
 
@@ -303,7 +306,7 @@ public class Game extends JPanel implements InputCallback {
         // 敌机射击
         for (AbstractAircraft enemies : enemyAircrafts) {
             enemyBullets.addAll(enemies.shoot());
-            if (isMusic&&(enemies instanceof EliteEnemy||enemies instanceof BossEnemy)) {
+            if (isMusic && (enemies instanceof EliteEnemy || enemies instanceof BossEnemy)) {
                 AudioPlayerThread enemyBulletAudioThread = new AudioPlayerThread("src/videos/bullet.wav");
                 bulletAudioThread.add(enemyBulletAudioThread);
                 enemyBulletAudioThread.start();
@@ -315,7 +318,7 @@ public class Game extends JPanel implements InputCallback {
         // 英雄射击
         heroBullets.addAll(heroAircraft.shoot());
         if (isMusic) {
-            heroBulletAudioThread = new AudioPlayerThread("src/videos/bullet.wav");
+            AudioPlayerThread heroBulletAudioThread = new AudioPlayerThread("src/videos/bullet.wav");
             bulletAudioThread.add(heroBulletAudioThread);
             heroBulletAudioThread.start();
         }
@@ -423,7 +426,7 @@ public class Game extends JPanel implements InputCallback {
         // 我方获得道具，道具生效
         for (BaseProp prop : Props) {
             if (heroAircraft.crash(prop) || prop.crash(heroAircraft) && !prop.notValid()) {
-                prop.takingEffect(heroAircraft,isMusic);
+                prop.takingEffect(heroAircraft, isMusic);
                 prop.vanish();// 销毁已生效的道具
             }
         }
@@ -503,11 +506,5 @@ public class Game extends JPanel implements InputCallback {
         g.drawString("LIFE:" + this.heroAircraft.getHp(), x, y);
     }
 
-    /**
-     * 用于和QuestionGUI中的方法一同,实现用户输入的字符串即时发送到主线程,避免
-     *
-     * @param s
-     * @param questionBox
-     */
 
 }

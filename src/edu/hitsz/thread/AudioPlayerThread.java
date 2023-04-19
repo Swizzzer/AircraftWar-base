@@ -6,15 +6,28 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ByteArrayInputStream;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class AudioPlayerThread extends Thread {
+public class AudioPlayerThread implements Runnable {
+    private Thread worker;
     private String fileName;
     private AudioFormat audioFormat;
     private byte[] samples;
+    private final AtomicBoolean running=new AtomicBoolean(false);
+
+    private SourceDataLine dataLine = null;
 
     public AudioPlayerThread(String fileName) {
         this.fileName = fileName;
         reverseMusic();
+    }
+    public void start(){
+        worker=new Thread(this);
+        worker.start();
+    }
+    public void stop(){
+        playStop();
+        running.set(false);
     }
 
 
@@ -56,7 +69,7 @@ public class AudioPlayerThread extends Thread {
         int size = (int) (audioFormat.getFrameSize() * audioFormat.getSampleRate());
         byte[] buffer = new byte[size];
         //源数据行SourceDataLine是可以写入数据的数据行
-        SourceDataLine dataLine = null;
+        dataLine = null;
         //获取受数据行支持的音频格式DataLine.info
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         try {
@@ -90,14 +103,32 @@ public class AudioPlayerThread extends Thread {
         if (dataLine != null) {
             dataLine.drain();
             dataLine.close();
+
         }
 
 
     }
+    public boolean isAlive(){
+        return running.get();
+    }
+    private void playStop(){
+        if (dataLine != null) {
+            dataLine.stop();
+
+        }
+
+    }
+
 
     @Override
     public void run() {
-        InputStream stream = new ByteArrayInputStream(samples);
-        play(stream);
+        running.set(true);
+        while(running.get()){
+            InputStream stream = new ByteArrayInputStream(samples);
+            play(stream);
+            running.set(false);
+
+        }
+
     }
 }
