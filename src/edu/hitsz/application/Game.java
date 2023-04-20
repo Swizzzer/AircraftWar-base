@@ -61,9 +61,10 @@ public class Game extends JPanel implements InputCallback {
     private int bossFlag = 0;
     /**
      * 记录分数除counter的商,用以判断是否生成boss敌机
+     * counter即生成Boss敌机的步长
      */
     private int quotient = 0;
-    private final int counter = 500;
+    private final int counter = 1000;
 
     /**
      * 当前时刻
