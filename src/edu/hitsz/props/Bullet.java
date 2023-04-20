@@ -1,6 +1,7 @@
 package edu.hitsz.props;
 
 import edu.hitsz.aircraft.HeroAircraft;
+import edu.hitsz.application.Game;
 import edu.hitsz.thread.AudioPlayerThread;
 import edu.hitsz.thread.FireSupplyThread;
 
@@ -11,8 +12,8 @@ public class Bullet extends BaseProp{
     }
 
     @Override
-    public void takingEffect(HeroAircraft Craft,boolean isMusic) {
-        new FireSupplyThread(Craft).start();
+    public void takingEffect(HeroAircraft Craft, boolean isMusic, Game game) {
+        game.fireManageThread.fireAdd();
         if (isMusic) {
             new AudioPlayerThread("src/videos/get_supply.wav").start();
         }

@@ -3,6 +3,8 @@ package edu.hitsz.aircraft;
 import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.props.BaseProp;
+import edu.hitsz.props.propFactory.BulletSupplyFactory;
+import edu.hitsz.props.propFactory.PropFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -37,6 +39,7 @@ public class MobEnemy extends AbstractEnemy {
     @Override
     public void dropProps(List<BaseProp> Props){
         // 普通敌机不掉落道具
+
     }
 
 }

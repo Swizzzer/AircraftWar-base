@@ -1,5 +1,6 @@
 package edu.hitsz.props;
 
+import edu.hitsz.application.Game;
 import edu.hitsz.application.Main;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.aircraft.*;
@@ -16,5 +17,5 @@ public abstract class BaseProp extends AbstractFlyingObject {
             vanish();
         }
     }
-    public abstract void takingEffect(HeroAircraft Craft,boolean isMusic);
+    public abstract void takingEffect(HeroAircraft Craft, boolean isMusic, Game game);
 }

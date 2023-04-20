@@ -1,19 +1,29 @@
 package edu.hitsz.thread;
 
+import edu.hitsz.application.Game;
+
 import javax.sound.sampled.*;
 import java.io.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 专门用于播放炸弹爆炸声的线程.在炸弹道具生效2s后播放爆炸音效
  */
-public class BombSupplyThread extends Thread {
+public class BombSupplyThread implements Runnable {
+
+    private Thread worker;
+    private final AtomicBoolean running = new AtomicBoolean(false);
+    private final Game game;
+
 
     // 硬编码的文件地址
-    private final String fileName="src/videos/bomb_explosion.wav";
+    private final String fileName = "src/videos/bomb_explosion.wav";
     private AudioFormat audioFormat;
     private byte[] samples;
+    private SourceDataLine dataLine;
 
-    public BombSupplyThread() {
+    public BombSupplyThread(Game game) {
+        this.game = game;
         reverseMusic();
     }
 
@@ -55,7 +65,7 @@ public class BombSupplyThread extends Thread {
         int size = (int) (audioFormat.getFrameSize() * audioFormat.getSampleRate());
         byte[] buffer = new byte[size];
         //源数据行SoureDataLine是可以写入数据的数据行
-        SourceDataLine dataLine = null;
+        dataLine = null;
         //获取受数据行支持的音频格式DataLine.info
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
         try {
@@ -87,16 +97,47 @@ public class BombSupplyThread extends Thread {
 
     }
 
+    public boolean isAlive() {
+        return running.get();
+    }
+
+    private void playStop() {
+        if (dataLine != null) {
+            dataLine.stop();
+
+        }
+
+    }
+
+    public void stop() {
+        playStop();
+        running.set(false);
+    }
+
+    public void start() {
+        worker = new Thread(this);
+        worker.start();
+    }
+
+
     @Override
     public void run() {
-        // 道具生效2s后炸弹爆炸
+        running.set(true);
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
-
         }
-        InputStream stream = new ByteArrayInputStream(samples);
-        play(stream);
+        while (running.get()) {
+            // 道具生效2s后炸弹爆炸
+            if (!game.getOverFlag()) {
+                InputStream stream = new ByteArrayInputStream(samples);
+                play(stream);
+            }
+
+            running.set(false);
+        }
+        running.set(false);
+
     }
 }

@@ -102,6 +102,7 @@ public class Game extends JPanel implements InputCallback {
      * 存储子弹线程的列表,用于游戏结束时一次性全部stop
      */
     private List<AudioPlayerThread> bulletAudioThread;
+    public FireManageThread fireManageThread;
 
 
     public Game(boolean isMusic) {
@@ -125,6 +126,9 @@ public class Game extends JPanel implements InputCallback {
         // 启动英雄机鼠标监听
         new HeroController(this, heroAircraft);
 
+    }
+    public boolean getOverFlag(){
+        return gameOverFlag;
     }
 
     /**
@@ -168,6 +172,11 @@ public class Game extends JPanel implements InputCallback {
             bgmAudioThread = new AudioPlayerThread("src/videos/bgm.wav");
             bgmAudioThread.start();
         }
+        /**
+         * 火力控制线程启动
+         */
+        fireManageThread=new FireManageThread(heroAircraft);
+        fireManageThread.start();
 
         // 定时任务：绘制、对象产生、碰撞判定、击毁及结束判定
         Runnable task = () -> {
@@ -239,6 +248,7 @@ public class Game extends JPanel implements InputCallback {
                 // 游戏结束
                 executorService.shutdown();
                 gameOverFlag = true;
+                fireManageThread.stop();
                 heroAircraft.destroyHeroCraft();
                 if (isMusic) {
                     overAudioThread = new AudioPlayerThread("src/videos/game_over.wav");
@@ -430,7 +440,7 @@ public class Game extends JPanel implements InputCallback {
         // 我方获得道具，道具生效
         for (BaseProp prop : Props) {
             if (heroAircraft.crash(prop) || prop.crash(heroAircraft) && !prop.notValid()) {
-                prop.takingEffect(heroAircraft, isMusic);
+                prop.takingEffect(heroAircraft, isMusic,this);
                 prop.vanish();// 销毁已生效的道具
             }
         }

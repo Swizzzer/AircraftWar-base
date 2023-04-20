@@ -1,8 +1,6 @@
 /**
  * 本次commit将AudioPlayerThread改为实现Runnable接口从而修复了Windows平台下游戏结束后仍存在间歇性射击音的bug.
  * 初步判断为Thread.stop()方法引起的问题
- * TODO 将thread软件包下另外两个类也改为对Runnable接口的实现
-
  */
 package edu.hitsz.thread;
 

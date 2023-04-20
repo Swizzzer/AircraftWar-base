@@ -2,6 +2,7 @@ package edu.hitsz.props;
 
 import edu.hitsz.aircraft.AbstractAircraft;
 import edu.hitsz.aircraft.HeroAircraft;
+import edu.hitsz.application.Game;
 import edu.hitsz.thread.*;
 
 public class Bomb extends BaseProp {
@@ -10,11 +11,12 @@ public class Bomb extends BaseProp {
 
     }
 
-    @Override
-    public void takingEffect(HeroAircraft Craft, boolean isMusic) {
+    
+
+    public void takingEffect(HeroAircraft Craft, boolean isMusic, Game game) {
         if (isMusic) {
-             new AudioPlayerThread("src/videos/get_supply.wav").start();
-             new BombSupplyThread().start();
+            new AudioPlayerThread("src/videos/get_supply.wav").start();
+            new BombSupplyThread(game).start();
 
         }
         System.out.println("BombSupply active!");
